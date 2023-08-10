@@ -69,3 +69,27 @@ def chart2():
     # create and plot a dataframe of 2019 traffic from ds students that matches the identified webdev paths aggregate to count the number
     # of times a path was accessed in a day
     df[(df.program_id == 3) & (df.path.str.contains('|'.join(check_paths)) & (df.name != 'Staff') )].resample('D').path.agg('count').plot()
+
+
+def webdev():
+
+    # bring in  df
+    df = scott_wrangle.wrangle_webtraffic()
+
+    # Display the paths that resulted in the top 30% of traffic to extract the topics that were revisited by webdev grads
+    webdev = df[(df.index > pd.to_datetime(df.end_date) + timedelta(days=4*30)) & (df.program_id == 2)]\
+    .groupby('path').time.count().sort_values(ascending=False).head(23)
+
+    return webdev
+
+
+def data_science():
+
+    # bring in  df
+    df = scott_wrangle.wrangle_webtraffic()
+
+    # Display the paths that resulted in the top 30% of traffic to extract the topics that were revisited by webdev grads
+    ds = df[(df.index > pd.to_datetime(df.end_date) + timedelta(days=4*30)) & (df.program_id == 2)]\
+    .groupby('path').time.count().sort_values(ascending=False).head(23)
+
+    return ds
