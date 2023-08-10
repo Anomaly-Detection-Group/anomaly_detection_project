@@ -42,8 +42,10 @@ def get_explore_question_2():
     top_5_in_cohort = lesson_counts.sort_values(by=["cohort_id", "referred_to_lesson_count"], ascending=[True,False]).groupby(["cohort_id"]).head(5)
 
     # look at one lesson to compare top results
-    plt.figure(figsize=(10,3))
-    top_5_in_cohort[top_5_in_cohort.lesson == "javascript-i"].referred_to_lesson_count.sort_values(ascending=False).plot(kind="bar")
+    plt.figure(figsize=(12,3))
+    results = top_5_in_cohort[top_5_in_cohort.lesson == "javascript-i"][["cohort_id","referred_to_lesson_count"]].sort_values(by="cohort_id").set_index("cohort_id")
+    sns.barplot(x=results.index, y=results.referred_to_lesson_count)
+    plt.xticks(rotation=90)
     plt.title("cohort reference to javascript-1 count")
     plt.xlabel("cohort id")
     plt.ylabel("referred javascript-i count")
