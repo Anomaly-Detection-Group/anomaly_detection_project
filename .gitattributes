@@ -1,2 +1,7 @@
 *.ipynb linguist-language=Python
+<<<<<<< HEAD
 *.py linguist-language=Python
+=======
+*.ipynb linguist-language=Python
+*.sql linguist-language=SQL
+>>>>>>> ca95688ebb3ac2e260e393b96afd48e2d2969d70

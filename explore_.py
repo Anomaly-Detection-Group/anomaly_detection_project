@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from datetime import datetime, timedelta
 import wrangle_
 import env
 
@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore")
 
 sns.set_theme(style="whitegrid")
 
-# explore function
+# explore function question 1
 def get_explore_question_1():
     """
     Goal: Do all work needed and return results for question 1
@@ -35,7 +35,7 @@ def get_explore_question_1():
     return lesson_counts
 
 
-# explore function
+# explore function question 2
 def get_explore_question_2():
     """
     Goal: Do all work needed and return results for question 2
@@ -66,8 +66,7 @@ def get_explore_question_2():
     plt.xlabel("cohort id")
     plt.ylabel("referred javascript-i count")
 
-    return plt.gcf()
-
+# explore function question 3
 def get_explore_question_3():
     """
     Goal: Do all work needed and return results for question 3
@@ -116,8 +115,49 @@ def get_explore_question_3():
     one_day_list = low_activity[low_activity['date']==1]
     return one_day_list, days_from_end_df
 
+# explore function question 4
 def get_explore_question_4():
     """
     Goal: Do all work needed and return results for question 4
     """
-    
+    # bring in  df
+    df = wrangle_.wrangle_webtraffic()
+
+    # Filter the dataframe to just student entries in 2019 and stores it in the filtered dataframe 'df_f'
+    df_f = df[(df.index > '2018-12-31') & (df.index < '2020-01-01') & (df.name != 'Staff')]
+
+    # Make a list of webdev paths that were accessed by ds students
+    check_paths = ['error-pages/asdfasdf', 'jquery', 'spring', 'java-i', 'toc', 'javascript-i', 'html-css']
+
+    # Set the datetime cause apparently it wasn't actually set earlier somehow
+    df_f.index = pd.to_datetime(df_f.index)
+    df.index = pd.to_datetime(df.index)
+
+    # create and plot a dataframe of 2019 traffic from ds students that matches the identified webdev paths aggregate to count the number
+    # of times a path was accessed in a day
+    plt.figure(figsize=(10, 3))
+    df[(df.program_id == 3) & (df.path.str.contains('|'.join(check_paths)) & (df.name != 'Staff') )].resample('D').path.agg('count').plot()
+    plt.title("web dev student alumni access data science curriculum")
+    plt.xlabel("date of access")
+    plt.ylabel("page access count")
+
+# explore function question 5
+def get_explore_question_5():
+    """
+    Goal: Do all work needed and return results for question 5
+    """
+    # bring in  df
+    df = wrangle_.wrangle_webtraffic()
+
+    # Display the paths that resulted in the top 30% of traffic to extract the topics that were revisited by webdev grads
+    webdev = df[(df.index > pd.to_datetime(df.end_date) + timedelta(days=4*30)) & (df.program_id == 2)]\
+    .groupby('path').time.count().sort_values(ascending=False).head(23)
+
+    # bring in  df
+    df = wrangle_.wrangle_webtraffic()
+
+    # Display the paths that resulted in the top 30% of traffic to extract the topics that were revisited by webdev grads
+    ds = df[(df.index > pd.to_datetime(df.end_date) + timedelta(days=4*30)) & (df.program_id == 2)]\
+    .groupby('path').time.count().sort_values(ascending=False).head(23)
+
+    return webdev, ds
